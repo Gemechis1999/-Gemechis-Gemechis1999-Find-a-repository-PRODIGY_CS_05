@@ -1,0 +1,24 @@
+from scapy.all import sniff, IP, TCP, UDP
+
+# Define a packet handler function
+def packet_handler(packet):
+    if IP in packet:
+        ip_layer = packet[IP]
+        print(f"Source IP: {ip_layer.src}")
+        print(f"Destination IP: {ip_layer.dst}")
+        
+        if TCP in packet:
+            print("Protocol: TCP")
+        elif UDP in packet:
+            print("Protocol: UDP")
+        else:
+            print("Protocol: Other")
+        
+        # Print payload data (if any)
+        if packet.haslayer(TCP) or packet.haslayer(UDP):
+            print(f"Payload: {bytes(packet[IP].payload)}")
+        print("\n")
+
+# Capture packets
+print("Starting packet capture...")
+sniff(filter="ip", prn=packet_handler, count=10)
